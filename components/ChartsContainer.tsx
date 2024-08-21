@@ -13,6 +13,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getChartsDataAction } from '@/utils/actions';
 import {useTheme} from "next-themes";
 import {useEffect, useState} from "react";
+type HslColor = [number, number, number];
+type RgbColor = [number, number, number];
 function ChartsContainer() {
     const { data, isPending } = useQuery({
         queryKey: ['charts'],
@@ -30,14 +32,14 @@ function ChartsContainer() {
         console.log('Extracted color:', color); // Vérifiez la valeur extraite
 
         // Fonction pour convertir HSL à RGB
-        function hslToRgb(h, s, l) {
+        function hslToRgb(h: number, s: number, l: number): RgbColor {
             h = h % 360; // Assurez-vous que la teinte est dans la plage de 0 à 360
             s /= 100;
             l /= 100;
-            let c = (1 - Math.abs(2 * l - 1)) * s;
-            let x = c * (1 - Math.abs((h / 60) % 2 - 1));
-            let m = l - c / 2;
-            let r, g, b;
+            let c: number = (1 - Math.abs(2 * l - 1)) * s;
+            let x: number = c * (1 - Math.abs((h / 60) % 2 - 1));
+            let m: number = l - c / 2;
+            let r:any , g:any , b: any;
             if (0 <= h && h < 60) {
                 r = c; g = x; b = 0;
             } else if (60 <= h && h < 120) {
@@ -54,11 +56,11 @@ function ChartsContainer() {
             r = Math.round((r + m) * 255);
             g = Math.round((g + m) * 255);
             b = Math.round((b + m) * 255);
-            return `rgb(${r}, ${g}, ${b})`;
+            return [r, g, b];
         }
 
         // Fonction pour convertir RGB à Hex
-        function rgbToHex(r, g, b) {
+        function rgbToHex(r: number, g: number, b: number): string {
             return `#${[r, g, b].map(x => {
                 const hex = Math.round(x).toString(16);
                 return hex.length === 1 ? '0' + hex : hex;
@@ -66,10 +68,9 @@ function ChartsContainer() {
         }
 
         // Fonction pour analyser la couleur HSL
-        function parseHslColor(color) {
-            const [h, s, l] = color.split(' ').map(val => parseFloat(val.trim()));
-            const rgb = hslToRgb(h, s, l);
-            const [r, g, b] = rgb.match(/\d+/g).map(Number);
+        function parseHslColor(color: string): string {
+            const [h, s, l] = color.split(' ').map(val => parseFloat(val.trim())) as HslColor;
+            const [r, g, b] = hslToRgb(h, s, l);
             return rgbToHex(r, g, b);
         }
 

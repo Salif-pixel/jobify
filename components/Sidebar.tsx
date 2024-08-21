@@ -43,7 +43,7 @@ function Sidebar() {
                 </Link>
                 <TooltipProvider>
                     {links.map((link)=>{
-                                    return (  <Tooltip>
+                                    return (  <Tooltip key={link.label}>
                                                 <TooltipTrigger asChild>
                                                     <Link
                                                         href={link.href}
